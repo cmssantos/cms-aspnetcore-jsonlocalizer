@@ -16,7 +16,11 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: |
+          6.0.x
+          8.0.x
+    - name: Clear NuGet cache
+      run: dotnet nuget locals all --clear
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -37,7 +41,9 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: |
+          6.0.x
+          8.0.x
     - name: Download build artifacts
       uses: actions/download-artifact@v4
       with:
@@ -54,13 +60,15 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: |
+          6.0.x
+          8.0.x
     - name: Download build artifacts
       uses: actions/download-artifact@v4
       with:
         name: build-artifacts
     - name: Pack
-      run: dotnet pack --configuration Release --no-build --output nupkgs
+      run: dotnet pack --configuration Release --output nupkgs
     - name: Upload NuGet package
       uses: actions/upload-artifact@v4
       with:
