@@ -1,6 +1,6 @@
-# Cms.AspNetCore.JsonLocalizer
+## Cms.AspNetCore.JsonLocalizer
 
-### Cms.AspNetCore.JsonLocalizer is a flexible and efficient JSON-based localization library for ASP.NET Core applications. It provides an easy way to manage and retrieve localized strings using JSON resource files, supporting culture-specific localization and seamless integration with dependency injection.
+#### Cms.AspNetCore.JsonLocalizer is a flexible and efficient JSON-based localization library for ASP.NET Core applications. It provides an easy way to manage and retrieve localized strings using JSON resource files, supporting culture-specific localization and seamless integration with dependency injection.
 
 ## Features
 
