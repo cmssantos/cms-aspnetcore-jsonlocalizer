@@ -6,9 +6,9 @@ namespace Cms.AspNetCore.JsonLocalizer.Services;
 /// <summary>
 /// Main implementation of the localization service.
 /// </summary>
-internal class Localizer(string resourcesPath, string cultureName) : ILocalizer
+internal class Localizer(JsonResourceAccessor resourceAccessor, string cultureName) : ILocalizer
 {
-    private readonly JsonResourceAccessor _resourceAccessor = new(resourcesPath);
+    private readonly JsonResourceAccessor _resourceAccessor = resourceAccessor;
     private readonly string _cultureName = cultureName;
 
     /// <summary>

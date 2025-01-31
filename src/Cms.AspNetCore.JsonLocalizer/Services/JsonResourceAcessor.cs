@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Text.Json;
 using Cms.AspNetCore.JsonLocalizer.Models;
 
@@ -8,8 +9,9 @@ namespace Cms.AspNetCore.JsonLocalizer.Services;
 /// </summary>
 internal class JsonResourceAccessor
 {
-    private readonly Dictionary<string, JsonElement> _resources = [];
+    private readonly ConcurrentDictionary<string, JsonElement> _resources = new();
     private readonly JsonSerializerOptions _jsonOptions;
+    private readonly string _resourcesPath;
 
     /// <summary>
     /// Initializes a new instance of the JsonResourceAccessor class.
@@ -18,6 +20,7 @@ internal class JsonResourceAccessor
     /// <exception cref="DirectoryNotFoundException">Thrown when the specified resources directory is not found.</exception>
     public JsonResourceAccessor(string resourcesPath)
     {
+        _resourcesPath = resourcesPath;
         _jsonOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
@@ -30,18 +33,18 @@ internal class JsonResourceAccessor
             throw new DirectoryNotFoundException($"Resources directory not found: {resourcesPath}");
         }
 
-        foreach (var file in Directory.GetFiles(resourcesPath, "*.json"))
+        LoadAllResources();
+    }
+
+    private void LoadAllResources()
+    {
+        foreach (var file in Directory.GetFiles(_resourcesPath, "*.json"))
         {
             var cultureName = Path.GetFileNameWithoutExtension(file);
             LoadResources(file, cultureName);
         }
     }
 
-    /// <summary>
-    /// Loads resources from a JSON file for a specific culture.
-    /// </summary>
-    /// <param name="filePath">The path to the JSON file.</param>
-    /// <param name="cultureName">The name of the culture associated with the file.</param>
     private void LoadResources(string filePath, string cultureName)
     {
         if (File.Exists(filePath))

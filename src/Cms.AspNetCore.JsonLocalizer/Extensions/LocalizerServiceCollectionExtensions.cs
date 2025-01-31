@@ -7,25 +7,28 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Cms.AspNetCore.JsonLocalizer.Extensions;
 
 /// <summary>
-/// Extensões para configurar o serviço de localização.
+/// Extensions for configuring the localization service.
 /// </summary>
 public static class LocalizerServiceCollectionExtensions
 {
     /// <summary>
-    /// Adiciona o serviço de localização JSON à coleção de serviços.
+    /// Adds the JSON localization service to the service collection.
     /// </summary>
-    /// <param name="services">A coleção de serviços.</param>
-    /// <param name="resourcesPath">O caminho para os arquivos de recursos JSON.</param>
-    /// <returns>A coleção de serviços atualizada.</returns>
+    /// <param name="services">The service collection.</param>
+    /// <param name="resourcesPath">The path to the JSON resource files.</param>
+    /// <returns>The updated service collection.</returns>
     public static IServiceCollection AddJsonLocalizer(this IServiceCollection services, string resourcesPath)
     {
         services.AddHttpContextAccessor();
-        services.AddSingleton<ILocalizer>(sp =>
+        services.AddSingleton(new JsonResourceAccessor(resourcesPath));
+        services.AddScoped<ILocalizer>(sp =>
         {
             var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+            var jsonResourceAccessor = sp.GetRequiredService<JsonResourceAccessor>();
             var cultureName = httpContextAccessor.HttpContext?.Request.Headers["Accept-Language"].FirstOrDefault()
                 ?? CultureInfo.CurrentCulture.Name;
-            return new Localizer(resourcesPath, cultureName);
+
+            return new Localizer(jsonResourceAccessor, cultureName);
         });
 
         return services;
