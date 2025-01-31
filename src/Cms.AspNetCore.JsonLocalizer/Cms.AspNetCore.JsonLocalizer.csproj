@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>12.0</LangVersion>
+
+    <PackageId>Cms.AspNetCore.JsonLocalizer</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Cleudice Santos</Authors>
+    <Company>Cms</Company>
+    <Description> A flexible .NET library for easy localization of ASP.NET Core applications. Provides a simple way to
+        manage and retrieve localized strings using JSON resource files. Supports culture-specific localization,
+        parameterized messages, and seamless integration with dependency injection.
+    </Description>
+    <PackageTags>localization internationalization i18n l10n aspnetcore json-resources dotnet</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/cmssantos/cms-aspnetcore-jsonlocalizer</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/cmssantos/cms-aspnetcore-jsonlocalizer.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
