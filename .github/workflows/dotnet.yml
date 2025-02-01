@@ -51,6 +51,18 @@ jobs:
         /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }}
         /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }}
 
+    - name: List directory contents
+      run: ls -R src
+
+    - name: Display Assembly Version
+      run: find . -name "*.dll" -exec dotnet-assembly-info {} \;
+
+    - name: Install dotnet-assembly-info
+      run: dotnet tool install --global dotnet-assembly-info
+
+    - name: Display Assembly Version
+      run: find . -name "*.dll" -exec dotnet-assembly-info {} \;
+
     - name: Display Assembly Version
       run: ls -R **/bin/**/*.dll | xargs -I {} dotnet-assembly-info {}
 
