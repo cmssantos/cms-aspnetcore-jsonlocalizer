@@ -59,13 +59,6 @@ jobs:
         /p:Version=${{ steps.gitversion.outputs.fullSemVer }} \
         /p:PackageVersion=${{ steps.gitversion.outputs.fullSemVer }}
 
-    - name: Verify DLL Version
-      run: |
-        for dll in $(find ./src -name "*.dll"); do
-          echo "Checking $dll"
-          dotnet-assembly-info $dll
-        done
-
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
@@ -73,3 +66,23 @@ jobs:
         path: |
           **/bin
           **/obj
+
+  publish:
+    needs: build
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: |
+          6.0.x
+          8.0.x
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifacts
+    - name: Publish NuGet package
+      run: |
+        run: dotnet nuget push nupkgs/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
