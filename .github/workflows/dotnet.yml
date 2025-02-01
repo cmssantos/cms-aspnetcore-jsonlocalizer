@@ -36,8 +36,7 @@ jobs:
       with:
         updateAssemblyInfo: true
 
-    - name: Display GitVersion config
+    - name: Output the formatted version
       uses: gittools/actions/gitversion/command@v3.1.11
       with:
-        useConfigFile: true
-        arguments: '/showConfig'
+        arguments: '/format {Major}.{Minor}' # any Output Variable can be used here
