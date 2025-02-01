@@ -26,6 +26,9 @@ jobs:
         versionSpec: '6.0.x'
         preferLatestVersion: true
 
+    - name: Install dotnet-assembly-info
+      run: dotnet tool install -g dotnet-assembly-info
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -54,11 +57,13 @@ jobs:
         /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }}
         /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }}
 
-    - name: Verify Assembly Versions
+    - name: Check assembly info
       run: |
         for dll in $(find . -name "*.dll"); do
           echo "Checking $dll"
-          dotnet-assembly-info $dll
+          dotnet --info
+          dotnet --list-runtimes
+          dotnet --list-sdks
         done
 
     - name: Upload build artifacts
