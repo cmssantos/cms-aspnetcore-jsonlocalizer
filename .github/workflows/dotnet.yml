@@ -33,9 +33,6 @@ jobs:
           6.0.x
           8.0.x
 
-    - name: Install dotnet-assembly-info
-      run: dotnet tool install -g dotnet-assembly-info
-
     - name: Determine Version
       id: gitversion
       uses: gittools/actions/gitversion/execute@v3.1.11
