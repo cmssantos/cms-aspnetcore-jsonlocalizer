@@ -31,46 +31,36 @@ jobs:
     - name: Display Version
       run: |
         echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
-        echo "NuGetVersion: ${{ steps.gitversion.outputs.NuGetVersion }}"
+        echo "NuGetVersion: ${{ steps.gitversion.outputs.nuGetVersion }}"
         echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore /p:Version=${{ steps.gitversion.outputs.nuGetVersion }}
-    - name: Upload build artifacts
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
+    - name: Pack
+      run: dotnet pack --configuration Release --no-build --output nupkgs /p:Version=${{ steps.gitversion.outputs.nuGetVersion }}
+    - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: build-artifacts
-        path: |
-          **/bin/Release/net*
-          !**/bin/Release/net*/ref
+        name: nupkg
+        path: nupkgs/*.nupkg
 
   publish:
     needs: [build]
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - name: Download artifact
+      uses: actions/download-artifact@v4
       with:
-        fetch-depth: 0
+        name: nupkg
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
           6.0.x
           8.0.x
-    - name: Install GitVersion
-      uses: gittools/actions/gitversion/setup@v0.10.2
-      with:
-        preferLatestVersion: true
-    - name: Determine Version
-      id: gitversion
-      uses: gittools/actions/gitversion/execute@v0.10.2
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Release --no-restore /p:Version=${{ steps.gitversion.outputs.nuGetVersion }}
-    - name: Pack
-      run: dotnet pack --configuration Release --no-build --output nupkgs /p:Version=${{ steps.gitversion.outputs.nuGetVersion }}
     - name: Publish to NuGet
-      run: dotnet nuget push nupkgs/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
