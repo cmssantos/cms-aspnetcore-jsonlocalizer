@@ -38,17 +38,21 @@ jobs:
       uses: gittools/actions/gitversion/execute@v3.1.11
       with:
         updateAssemblyInfo: true
+        updateAssemblyInfoFilename: '**/AssemblyInfo.cs'
 
     - name: Display Formatted Version
       uses: gittools/actions/gitversion/command@v3.1.11
       with:
         arguments: '/format {Major}.{Minor}.{Patch}'
 
+    - name: Display Assembly Version
+      run: ls -R **/bin/**/*.dll | xargs -I {} dotnet-assembly-info {}
+
     - name: Restore dependencies
       run: dotnet restore
 
     - name: Build
-      run: dotnet build --configuration Release --no-restore /p:Version=${{ steps.gitversion.outputs.nuGetVersion }}
+      run: dotnet build --configuration Release --no-restore
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
