@@ -31,7 +31,8 @@ jobs:
     - name: Display Version
       run: |
         echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
-        echo "NuGetVersion: ${{ steps.gitversion.outputs.nuGetVersion }}"
+        echo "NuGetVersion: ${{ steps.gitversion.outputs.NuGetVersion }}"
+        echo "FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
@@ -43,7 +44,6 @@ jobs:
         path: |
           **/bin/Release/net*
           !**/bin/Release/net*/ref
-
 
   publish:
     needs: [build]
