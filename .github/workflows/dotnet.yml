@@ -33,7 +33,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build Project with Versioning
-      run: dotnet build --configuration Release /p:Version=${{ steps.gitversion.outputs.nuGetVersion }}
+      run: dotnet build --configuration Release /p:Version=${{ steps.gitversion.outputs.nuGetVersion }} /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }}
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
@@ -41,7 +41,6 @@ jobs:
         path: |
           **/bin
           **/obj
-
   test:
     needs: build
     runs-on: ubuntu-latest
