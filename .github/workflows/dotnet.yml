@@ -44,6 +44,7 @@ jobs:
           **/bin/Release/net*
           !**/bin/Release/net*/ref
 
+
   publish:
     needs: [build]
     if: github.event_name == 'release'
