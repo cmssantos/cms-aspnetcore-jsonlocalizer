@@ -83,3 +83,52 @@ jobs:
         name: test-results
         path: TestResults
       if: always()
+
+  pack:
+    needs: test
+    if: success() && startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: |
+          6.0.x
+          8.0.x
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.10.2
+      with:
+        preferLatestVersion: true
+    - name: Determine Version
+      id: gitversion
+      uses: gittools/actions/gitversion/execute@v0.10.2
+    - name: Set Version Environment Variables
+      id: set_version
+      run: |
+        echo "PACKAGE_VERSION=${{ steps.gitversion.outputs.nuGetVersion }}" >> $GITHUB_OUTPUT
+        echo "ASSEMBLY_VERSION=${{ steps.gitversion.outputs.assemblySemVer }}" >> $GITHUB_OUTPUT
+        echo "FILE_VERSION=${{ steps.gitversion.outputs.assemblySemFileVer }}" >> $GITHUB_OUTPUT
+        echo "INFORMATIONAL_VERSION=${{ steps.gitversion.outputs.informationalVersion }}" >> $GITHUB_OUTPUT
+    - name: Display Version Information
+      run: |
+        echo "Package Version: ${{ steps.set_version.outputs.PACKAGE_VERSION }}"
+        echo "Assembly Version: ${{ steps.set_version.outputs.ASSEMBLY_VERSION }}"
+        echo "File Version: ${{ steps.set_version.outputs.FILE_VERSION }}"
+        echo "Informational Version: ${{ steps.set_version.outputs.INFORMATIONAL_VERSION }}"
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Pack NuGet Package
+      run: |
+        dotnet pack --configuration Release --output nupkgs \
+        /p:PackageVersion=${{ steps.set_version.outputs.PACKAGE_VERSION }} \
+        /p:AssemblyVersion=${{ steps.set_version.outputs.ASSEMBLY_VERSION }} \
+        /p:FileVersion=${{ steps.set_version.outputs.FILE_VERSION }} \
+        /p:InformationalVersion=${{ steps.set_version.outputs.INFORMATIONAL_VERSION }}
+    - name: Upload NuGet Package Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-package
+        path: nupkgs
