@@ -49,7 +49,18 @@ jobs:
       run: dotnet restore
 
     - name: Build
-      run: dotnet build --configuration Release --no-restore /p:Version=${{ steps.gitversion.outputs.fullSemVer }}
+      run: dotnet build --configuration Release --no-restore
+        /p:Version=${{ steps.gitversion.outputs.fullSemVer }}
+        /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }}
+        /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }}
+
+    - name: Verify Assembly Versions
+      run: |
+        for dll in $(find . -name "*.dll"); do
+          echo "Checking $dll"
+          dotnet-assembly-info $dll
+        done
+
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
