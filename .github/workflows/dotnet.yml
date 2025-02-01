@@ -35,6 +35,9 @@ jobs:
     - name: Determine Version
       id: gitversion
       uses: gittools/actions/gitversion/execute@v0.10.2
+    - name: Set NuGet Version
+      run: |
+        echo "GitVersion_NuGetVersion=${{ steps.gitversion.outputs.majorMinorPatch }}${{ steps.gitversion.outputs.prereleaseTagWithDash }}" >> $GITHUB_ENV
     - name: Display GitVersion outputs
       run: |
         echo "GitVersion_NuGetVersion: ${{ steps.gitversion.outputs.nuGetVersion }}"
