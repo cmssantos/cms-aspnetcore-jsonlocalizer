@@ -36,7 +36,7 @@ jobs:
       with:
         updateAssemblyInfo: true
 
-    - name: Output the formatted version
+    - name: Display Formatted Version
       uses: gittools/actions/gitversion/command@v3.1.11
       with:
-        arguments: '/format {Major}.{Minor}' # any Output Variable can be used here
+        arguments: '/format {Major}.{Minor}.{Patch}'
