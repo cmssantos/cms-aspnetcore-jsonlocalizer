@@ -16,10 +16,10 @@
     <Nullable>enable</Nullable>
     <LangVersion>12.0</LangVersion>
 
-    <Version>$(Version)</Version>
-    <AssemblyVersion>$(AssemblyVersion)</AssemblyVersion>
-    <FileVersion>$(FileVersion)</FileVersion>
-    <InformationalVersion>$(InformationalVersion)</InformationalVersion>
+    <Version>$(PACKAGE_VERSION)</Version>
+    <AssemblyVersion>$(ASSEMBLY_VERSION)</AssemblyVersion>
+    <FileVersion>$(FILE_VERSION)</FileVersion>
+    <InformationalVersion>$(INFORMATIONAL_VERSION)</InformationalVersion>
 
     <PackageId>Cms.AspNetCore.JsonLocalizer</PackageId>
     <Authors>Cleudice Santos</Authors>
