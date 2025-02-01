@@ -1,0 +1,10 @@
+mode: ContinuousDeployment
+branches:
+  main:
+    tag: ''
+    increment: Patch
+  develop:
+    tag: 'beta'
+ignore:
+  sha: []
+merge-message-formats: {}
