@@ -20,6 +20,7 @@
     <AssemblyVersion>$(ASSEMBLY_VERSION)</AssemblyVersion>
     <FileVersion>$(FILE_VERSION)</FileVersion>
     <InformationalVersion>$(INFORMATIONAL_VERSION)</InformationalVersion>
+    <PackageVersion>$(PACKAGE_VERSION)</PackageVersion>
 
     <PackageId>Cms.AspNetCore.JsonLocalizer</PackageId>
     <Authors>Cleudice Santos</Authors>
