@@ -39,15 +39,20 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Build Project with Versioning
-      run: dotnet build --configuration Release /p:Version=${{ steps.gitversion.outputs.nuGetVersion }} /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} /p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }}
+      run: |
+        dotnet build --configuration Release \
+        /p:Version=${{ steps.gitversion.outputs.nuGetVersion }} \
+        /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} \
+        /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} \
+        /p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }}
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: build-artifacts
         path: |
           **/bin
-          **/obj          
-          
+          **/obj
+
   test:
     needs: build
     runs-on: ubuntu-latest
@@ -90,7 +95,12 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Pack NuGet Package with Versioning
-      run: dotnet pack --configuration Release --output nupkgs /p:PackageVersion=${{ steps.gitversion-packaging.outputs.nuGetVersion }}
+      run: |
+        dotnet pack --configuration Release --output nupkgs \
+        /p:PackageVersion=${{ steps.gitversion-packaging.outputs.nuGetVersion }} \
+        /p:AssemblyVersion=${{ steps.gitversion-packaging.outputs.assemblySemVer }} \
+        /p:FileVersion=${{ steps.gitversion-packaging.outputs.assemblySemFileVer }} \
+        /p:InformationalVersion=${{ steps.gitversion-packaging.outputs.informationalVersion }}
     - name: Upload NuGet Package Artifact
       uses: actions/upload-artifact@v4
       with:
@@ -110,5 +120,5 @@ jobs:
     - name: Publish to NuGet.org with API Key Secret 
       run: |
         for nupkg in nupkgs/*.nupkg; do 
-          dotnet nuget push "$nupkg" --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate; 
+          dotnet nuget push "$nupkg" --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
         done
