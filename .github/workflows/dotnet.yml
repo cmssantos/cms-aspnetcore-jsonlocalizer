@@ -40,12 +40,11 @@ jobs:
         echo "GitVersion_NuGetVersion=${{ steps.gitversion.outputs.majorMinorPatch }}${{ steps.gitversion.outputs.prereleaseTagWithDash }}" >> $GITHUB_ENV
     - name: Display GitVersion outputs
       run: |
-        echo "GitVersion_NuGetVersion: ${{ steps.gitversion.outputs.nuGetVersion }}"
         echo "GitVersion_FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
         echo "GitVersion_MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
     - name: Set Version Environment Variables
       run: |
-        echo "PACKAGE_VERSION=${{ steps.gitversion.outputs.nuGetVersion }}" >> $GITHUB_ENV
+        echo "PACKAGE_VERSION=${{ GitVersion_NuGetVersion }}" >> $GITHUB_ENV
         echo "ASSEMBLY_VERSION=${{ steps.gitversion.outputs.assemblySemVer }}" >> $GITHUB_ENV
         echo "FILE_VERSION=${{ steps.gitversion.outputs.assemblySemFileVer }}" >> $GITHUB_ENV
         echo "INFORMATIONAL_VERSION=${{ steps.gitversion.outputs.informationalVersion }}" >> $GITHUB_ENV
