@@ -30,12 +30,11 @@ jobs:
     - name: Install GitVersion
       uses: gittools/actions/gitversion/setup@v0.10.2
       with:
+        gitversion-version: '5.12.0'
         preferLatestVersion: true
     - name: Determine Version
       id: gitversion
       uses: gittools/actions/gitversion/execute@v0.10.2
-      with:
-        preferLatestVersion: true
     - name: Set Version Environment Variables
       run: |
         echo "PACKAGE_VERSION=${{ steps.gitversion.outputs.nuGetVersion }}" >> $GITHUB_ENV
