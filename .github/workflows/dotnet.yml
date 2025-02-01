@@ -28,7 +28,7 @@ jobs:
           6.0.x
           8.0.x
     - name: Install GitVersion
-      uses: gittools/actions/gitversion/setup@v0.10.2
+      uses: gittools/actions/gitversion/setup@3.1.11
       with:
         preferLatestVersion: true
     - name: Determine Version
