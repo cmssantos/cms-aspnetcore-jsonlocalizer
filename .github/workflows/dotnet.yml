@@ -28,19 +28,26 @@ jobs:
     - name: Determine Version
       id: gitversion
       uses: gittools/actions/gitversion/execute@v0.10.2
+    - name: Display GitVersion outputs
+      run: |
+        echo "NuGetVersion: ${{ steps.gitversion.outputs.nuGetVersion }}"
+        echo "AssemblySemVer: ${{ steps.gitversion.outputs.assemblySemVer }}"
+        echo "AssemblySemFileVer: ${{ steps.gitversion.outputs.assemblySemFileVer }}"
+        echo "InformationalVersion: ${{ steps.gitversion.outputs.informationalVersion }}"
     - name: Clean
       run: dotnet clean
     - name: Restore dependencies
       run: dotnet restore
     - name: Build Project with Versioning
-      run: dotnet build --configuration Release /p:Version=${{ steps.gitversion.outputs.nuGetVersion }} /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }}
+      run: dotnet build --configuration Release /p:Version=${{ steps.gitversion.outputs.nuGetVersion }} /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} /p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }}
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: build-artifacts
         path: |
           **/bin
-          **/obj
+          **/obj          
+          
   test:
     needs: build
     runs-on: ubuntu-latest

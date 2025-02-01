@@ -11,24 +11,20 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <AssemblyVersion>$(GitVersion_AssemblySemVer)</AssemblyVersion>
-    <FileVersion>$(GitVersion_AssemblySemFileVer)</FileVersion>
-    <InformationalVersion>$(GitVersion_InformationalVersion)</InformationalVersion>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>12.0</LangVersion>
 
+    <AssemblyVersion>$(GitVersion_AssemblySemVer)</AssemblyVersion>
+    <FileVersion>$(GitVersion_AssemblySemFileVer)</FileVersion>
+    <InformationalVersion>$(GitVersion_InformationalVersion)</InformationalVersion>
+    <Version>$(GitVersion_NuGetVersion)</Version>
+
     <PackageId>Cms.AspNetCore.JsonLocalizer</PackageId>
     <Authors>Cleudice Santos</Authors>
     <Company>Cms</Company>
-    <Description> A flexible .NET library for easy localization of ASP.NET Core applications. Provides a simple way to
-        manage and retrieve localized strings using JSON resource files. Supports culture-specific localization,
-        parameterized messages, and seamless integration with dependency injection.
-    </Description>
+    <Description>A flexible .NET library for easy localization of ASP.NET Core applications. Provides a simple way to manage and retrieve localized strings using JSON resource files. Supports culture-specific localization, parameterized messages, and seamless integration with dependency injection.</Description>
     <PackageTags>localization internationalization i18n l10n aspnetcore json-resources dotnet</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/cmssantos/cms-aspnetcore-jsonlocalizer</PackageProjectUrl>
