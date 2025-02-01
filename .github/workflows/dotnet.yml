@@ -120,7 +120,12 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
       - name: Pack NuGet Package
-        run: dotnet pack --configuration Release --output nupkgs /p:Version=${{ env.PACKAGE_VERSION }} /p:AssemblyVersion=${{ env.ASSEMBLY_VERSION }} /p:FileVersion=${{ env.FILE_VERSION }} /p:InformationalVersion=${{ env.INFORMATIONAL_VERSION }}
+        run: |
+          dotnet pack --configuration Release --output nupkgs \
+          /p:Version=${{ env.PACKAGE_VERSION }} \
+          /p:AssemblyVersion=${{ env.ASSEMBLY_VERSION }} \
+          /p:FileVersion=${{ env.FILE_VERSION }} \
+          /p:InformationalVersion=${{ env.INFORMATIONAL_VERSION }}
       - name: Upload NuGet Package Artifact
         uses: actions/upload-artifact@v4
         with:
