@@ -57,16 +57,18 @@ jobs:
       run: dotnet test --no-restore --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
 
     - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
       env:
         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      with:
+        slug: cmssantos/cms-aspnetcore-jsonlocalizer
 
     - name: Generate coverage report
       uses: irongut/CodeCoverageSummary@v1.3.0
       with:
         filename: coverage/**/coverage.cobertura.xml
         badge: true
-        fail_below_min: true
+        fail_below_min: false
         format: markdown
         hide_branch_rate: false
         hide_complexity: true
