@@ -1,4 +1,4 @@
-name: .NET CI/CD
+name: .NET Build
 
 on:
   push:
@@ -8,98 +8,22 @@ on:
   pull_request:
     branches: [ "main" ]
 
-env:
-  PACKAGE_VERSION: 0.0.0
-  ASSEMBLY_VERSION: 0.0.0.0
-  FILE_VERSION: 0.0.0.0
-  INFORMATIONAL_VERSION: 0.0.0+0
-
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: |
           6.0.x
           8.0.x
-    - name: Install GitVersion
-      uses: gittools/actions/gitversion/setup@v0.10.2
-      with:
-        preferLatestVersion: true
-    - name: Determine Version
-      id: gitversion
-      uses: gittools/actions/gitversion/execute@v0.10.2
-    - name: Set NuGet Version
-      run: |
-        echo "GitVersion_NuGetVersion=${{ steps.gitversion.outputs.majorMinorPatch }}${{ steps.gitversion.outputs.prereleaseTagWithDash }}" >> $GITHUB_ENV
-    - name: Display GitVersion outputs
-      run: |
-        echo "GitVersion_FullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
-        echo "GitVersion_MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
-    - name: Set Version Environment Variables
-      run: |
-        echo "PACKAGE_VERSION=${{ env.GitVersion_NuGetVersion }}" >> $GITHUB_ENV
-        echo "ASSEMBLY_VERSION=${{ steps.gitversion.outputs.assemblySemVer }}" >> $GITHUB_ENV
-        echo "FILE_VERSION=${{ steps.gitversion.outputs.assemblySemFileVer }}" >> $GITHUB_ENV
-        echo "INFORMATIONAL_VERSION=${{ steps.gitversion.outputs.informationalVersion }}" >> $GITHUB_ENV
-    - name: Display Version Information
-      run: |
-        echo "Package Version: ${{ env.PACKAGE_VERSION }}"
-        echo "Assembly Version: ${{ env.ASSEMBLY_VERSION }}"
-        echo "File Version: ${{ env.FILE_VERSION }}"
-        echo "Informational Version: ${{ env.INFORMATIONAL_VERSION }}"
+
     - name: Restore dependencies
       run: dotnet restore
+
     - name: Build
       run: dotnet build --configuration Release --no-restore
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-artifacts
-        path: |
-          **/bin
-          **/obj
-
-  pack:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: |
-            6.0.x
-            8.0.x
-      - name: Install GitVersion
-        uses: gittools/actions/gitversion/setup@v0.10.2
-        with:
-          preferLatestVersion: true
-      - name: Determine Version
-        id: gitversion
-        uses: gittools/actions/gitversion/execute@v0.10.2
-      - name: Set NuGet Version
-        run: |
-          echo "GitVersion_NuGetVersion=${{ steps.gitversion.outputs.majorMinorPatch }}${{ steps.gitversion.outputs.prereleaseTagWithDash }}" >> $GITHUB_ENV
-      - name: Set Version Environment Variables
-        run: |
-          echo "PACKAGE_VERSION=${{ env.GitVersion_NuGetVersion }}" >> $GITHUB_ENV
-          echo "ASSEMBLY_VERSION=${{ steps.gitversion.outputs.assemblySemVer }}" >> $GITHUB_ENV
-          echo "FILE_VERSION=${{ steps.gitversion.outputs.assemblySemFileVer }}" >> $GITHUB_ENV
-          echo "INFORMATIONAL_VERSION=${{ steps.gitversion.outputs.informationalVersion }}" >> $GITHUB_ENV
-      - name: Restore dependencies
-        run: dotnet restore
-      - name: Pack
-        run: dotnet pack --configuration Release /p:Version=${{ env.PACKAGE_VERSION }} --output nupkgs
-      - name: Upload NuGet package
-        uses: actions/upload-artifact@v4
-        with:
-          name: nuget-package
-          path: nupkgs/*.nupkg
