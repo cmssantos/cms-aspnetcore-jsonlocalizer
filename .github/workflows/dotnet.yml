@@ -40,3 +40,6 @@ jobs:
       uses: gittools/actions/gitversion/command@v3.1.11
       with:
         arguments: '/format {Major}.{Minor}.{Patch}'
+
+    - name: Restore dependencies
+      run: dotnet restore
