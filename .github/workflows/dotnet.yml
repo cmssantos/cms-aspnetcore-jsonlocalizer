@@ -118,6 +118,9 @@ jobs:
         echo "Assembly Version: ${{ steps.set_version.outputs.ASSEMBLY_VERSION }}"
         echo "File Version: ${{ steps.set_version.outputs.FILE_VERSION }}"
         echo "Informational Version: ${{ steps.set_version.outputs.INFORMATIONAL_VERSION }}"
+    - name: Set NuGet Package Version
+      run: |
+        dotnet build /p:PackageVersion=${{ steps.set_version.outputs.PACKAGE_VERSION }} -p:PackageVersion=${{ steps.set_version.outputs.PACKAGE_VERSION }}
     - name: Restore dependencies
       run: dotnet restore
     - name: Pack NuGet Package
