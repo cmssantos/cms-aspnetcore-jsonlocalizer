@@ -42,9 +42,6 @@ jobs:
       with:
         arguments: '/format {Major}.{Minor}.{Patch}'
 
-    - name: Display Assembly Version
-      run: ls -R **/bin/**/*.dll | xargs -I {} dotnet-assembly-info {}
-
     - name: Restore dependencies
       run: dotnet restore
 
@@ -54,14 +51,8 @@ jobs:
         /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }}
         /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }}
 
-    - name: Check assembly info
-      run: |
-        for dll in $(find . -name "*.dll"); do
-          echo "Checking $dll"
-          dotnet --info
-          dotnet --list-runtimes
-          dotnet --list-sdks
-        done
+    - name: Display Assembly Version
+      run: ls -R **/bin/**/*.dll | xargs -I {} dotnet-assembly-info {}
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
