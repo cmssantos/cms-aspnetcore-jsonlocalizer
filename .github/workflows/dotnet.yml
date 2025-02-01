@@ -46,25 +46,25 @@ jobs:
       run: dotnet restore
 
     - name: Build
-      run: dotnet build --configuration Release --no-restore
-        /p:Version=${{ steps.gitversion.outputs.fullSemVer }}
-        /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }}
-        /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }}
+      run: |
+        dotnet build --configuration Release --no-restore \
+        /p:Version=${{ steps.gitversion.outputs.fullSemVer }} \
+        /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} \
+        /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} \
+        /p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }}
 
-    - name: List directory contents
-      run: ls -R src
+    - name: Pack
+      run: |
+        dotnet pack --configuration Release --no-build --output nupkgs \
+        /p:Version=${{ steps.gitversion.outputs.fullSemVer }} \
+        /p:PackageVersion=${{ steps.gitversion.outputs.fullSemVer }}
 
-    - name: Display Assembly Version
-      run: find . -name "*.dll" -exec dotnet-assembly-info {} \;
-
-    - name: Install dotnet-assembly-info
-      run: dotnet tool install --global dotnet-assembly-info
-
-    - name: Display Assembly Version
-      run: find . -name "*.dll" -exec dotnet-assembly-info {} \;
-
-    - name: Display Assembly Version
-      run: ls -R **/bin/**/*.dll | xargs -I {} dotnet-assembly-info {}
+    - name: Verify DLL Version
+      run: |
+        for dll in $(find ./src -name "*.dll"); do
+          echo "Checking $dll"
+          dotnet-assembly-info $dll
+        done
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
