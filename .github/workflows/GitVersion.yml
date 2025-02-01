@@ -5,6 +5,6 @@ branches:
     increment: Patch
   develop:
     tag: 'beta'
+    increment: Minor
 ignore:
   sha: []
-merge-message-formats: {}
