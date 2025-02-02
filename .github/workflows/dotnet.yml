@@ -36,8 +36,6 @@ jobs:
     - name: Determine Version
       id: gitversion
       uses: gittools/actions/gitversion/execute@v3.1.11
-      with:
-        additionalArguments: '/verbosity Diagnostic'
 
     - name: Display Formatted Version
       uses: gittools/actions/gitversion/command@v3.1.11
@@ -87,9 +85,6 @@ jobs:
         dotnet-version: |
           6.0.x
           8.0.x
-
-    - name: List nupkg files
-      run: ls -R nupkgs
 
     - name: Publish NuGet package
       run: |
