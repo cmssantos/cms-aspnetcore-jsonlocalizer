@@ -89,7 +89,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=<cms-aspnetcore-jsonlocalizer>
+            -Dsonar.projectKey=<cmssantos_cms-aspnetcore-jsonlocalizer>
             -Dsonar.organization=<cms>
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
