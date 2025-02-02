@@ -20,12 +20,6 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Install GitVersion
-      uses: gittools/actions/gitversion/setup@v3.1.11
-      with:
-        versionSpec: '6.0.x'
-        preferLatestVersion: true
-
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -33,14 +27,15 @@ jobs:
           6.0.x
           8.0.x
 
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v3.1.11
+      with:
+        versionSpec: '6.0.x'
+        preferLatestVersion: true
+
     - name: Determine Version
       id: gitversion
       uses: gittools/actions/gitversion/execute@v3.1.11
-
-    - name: Display Formatted Version
-      uses: gittools/actions/gitversion/command@v3.1.11
-      with:
-        arguments: '/format {Major}.{Minor}.{Patch}'
 
     - name: Restore dependencies
       run: dotnet restore
@@ -53,42 +48,63 @@ jobs:
         /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} \
         /p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }}
 
-    - name: Pack
-      run: |
-        dotnet pack --configuration Release --no-build --output nupkgs \
-        /p:Version=${{ steps.gitversion.outputs.fullSemVer }} \
-        /p:PackageVersion=${{ steps.gitversion.outputs.fullSemVer }}
-
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-artifacts
-        path: |
-          **/bin
-          **/obj
-          nupkgs
-
-  publish:
-    needs: build
-    if: github.event_name == 'release'
+  test:
     runs-on: ubuntu-latest
+    needs: build
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: build-artifacts
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            6.0.x
+            8.0.x
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: |
-          6.0.x
-          8.0.x
+      - name: Restore dependencies
+        run: dotnet restore
 
-    - name: Publish NuGet package
-      run: |
-        dotnet nuget push nupkgs/*.nupkg \
-        --api-key ${{ secrets.NUGET_API_KEY }} \
-        --source https://api.nuget.org/v3/index.json \
-        --skip-duplicate
+      - name: Test
+        run: dotnet test --configuration Release --no-build
+
+  pack:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            6.0.x
+            8.0.x
+
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v3.1.11
+        with:
+          versionSpec: '6.0.x'
+          preferLatestVersion: true
+
+      - name: Determine Version
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v3.1.11
+
+      - name: Pack
+        run: |
+          dotnet pack --configuration Release --no-build --output nupkgs \
+          /p:Version=${{ steps.gitversion.outputs.fullSemVer }} \
+          /p:PackageVersion=${{ steps.gitversion.outputs.fullSemVer }}
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            nupkgs
