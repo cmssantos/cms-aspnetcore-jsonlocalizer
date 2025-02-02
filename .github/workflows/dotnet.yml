@@ -67,8 +67,8 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Test
-        run: dotnet test --configuration Release --no-build
+      - name: Run tests
+        run: dotnet test --no-restore --configuration Release
 
   pack:
     runs-on: ubuntu-latest
