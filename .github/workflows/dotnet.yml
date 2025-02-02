@@ -66,13 +66,18 @@ jobs:
         path: |
           **/bin
           **/obj
+          nupkgs
 
   publish:
     needs: build
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifacts
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -81,10 +86,12 @@ jobs:
           6.0.x
           8.0.x
 
-    - name: Download artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: build-artifacts
+    - name: List nupkg files
+      run: ls -R nupkgs
 
     - name: Publish NuGet package
-      run: dotnet nuget push nupkgs/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+      run: |
+        dotnet nuget push nupkgs/*.nupkg \
+        --api-key ${{ secrets.NUGET_API_KEY }} \
+        --source https://api.nuget.org/v3/index.json \
+        --skip-duplicate
