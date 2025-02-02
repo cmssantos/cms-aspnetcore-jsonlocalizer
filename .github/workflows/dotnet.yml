@@ -90,7 +90,7 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=<cmssantos_cms-aspnetcore-jsonlocalizer>
-            -Dsonar.organization=<cms>
+            -Dsonar.organization=<cmssantos>
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
