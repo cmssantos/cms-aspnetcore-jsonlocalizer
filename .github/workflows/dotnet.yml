@@ -81,10 +81,10 @@ jobs:
         uses: actions/setup-java@v2
         with:
             java-version: '17'
-            distribution: 'adopt'
+            distribution: 'temurin'
 
       - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@v1
+        uses: sonarsource/sonarcloud-github-action@v2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
