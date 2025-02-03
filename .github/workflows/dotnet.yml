@@ -23,10 +23,16 @@ jobs:
           git config --global core.eol crlf
           git add --renormalize .
           
+      - name: Fix line endings
+        run: |
+          find . -type f -name "*.cs" -exec dos2unix {} +
+          
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: |
+            6.0.x
+            8.0.x
       
       - name: Run linter
         run: dotnet format --verify-no-changes --verbosity diagnostic
@@ -106,7 +112,7 @@ jobs:
       - name: Run tests
         run: dotnet test --configuration Release --collect:"XPlat Code Coverage" --results-directory TestResults
     
-      - name: Publish test results
+      - name: Upload test results
         uses: actions/upload-artifact@v4
         with:
           name: test-results
@@ -116,6 +122,7 @@ jobs:
   pack:
     runs-on: ubuntu-latest
     needs: test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -155,9 +162,16 @@ jobs:
 
       - name: Pack
         run: |
+          if [[ ${{ github.ref }} == refs/heads/develop ]]; then
+            VERSION_SUFFIX="-alpha.${{ github.run_number }}"
+          elif [[ ${{ github.ref }} == refs/heads/main ]]; then
+            VERSION_SUFFIX="-beta.${{ github.run_number }}"
+          else
+            VERSION_SUFFIX=""
+          fi
           dotnet pack --configuration Release --output nupkgs \
-          /p:Version=${{ steps.gitversion.outputs.fullSemVer }} \
-          /p:PackageVersion=${{ steps.gitversion.outputs.fullSemVer }}
+          /p:Version=${{ steps.gitversion.outputs.fullSemVer }}$VERSION_SUFFIX \
+          /p:PackageVersion=${{ steps.gitversion.outputs.fullSemVer }}$VERSION_SUFFIX
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -165,3 +179,40 @@ jobs:
           name: build-artifacts
           path: |
             nupkgs
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: [test, pack]
+    if: github.event_name == 'release' && github.event.action == 'published'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            6.0.x
+            8.0.x
+            
+      - name: Check for NuGet package
+        run: |
+          if [ ! -f nupkgs/*.nupkg ]; then
+            echo "No NuGet package found"
+            exit 1
+          fi
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+          path: nupkgs
+
+      - name: Publish NuGet package
+        run: |
+          dotnet nuget push nupkgs/*.nupkg \
+          --api-key ${{ secrets.NUGET_API_KEY }} \
+          --source https://api.nuget.org/v3/index.json \
+          --skip-duplicate
