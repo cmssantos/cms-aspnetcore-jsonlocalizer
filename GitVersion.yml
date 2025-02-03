@@ -1,25 +1,31 @@
 mode: ContinuousDelivery
-branches:
-  develop:
-    regex: ^develop$
-    label: alpha
-    increment: Minor
-    track-merge-target: false
-    source-branches: []
-    tracks-release-branches: false
-    
-  main:
-    regex: ^main$
-    label: beta
-    increment: Patch
-    prevent-increment: true
-    is-release-branch: true
-    tracks-release-branches: false
+tag-prefix: '[vV]'
+major-version-bump-message: '\+semver:\s?(breaking|major)'
+minor-version-bump-message: '\+semver:\s?(feature|minor)'
+patch-version-bump-message: '\+semver:\s?(fix|patch)'
+no-bump-message: '\+semver:\s?(none|skip)'
+commit-message-incrementing: Enabled
 
-  release:
-    regex: ^releases?[/-]
-    label: ""
+branches:
+  feature:
+    regex: ^features?[/-]
+    label: alpha.{BranchName}
+    increment: Inherit
+    source-branches: ['develop', 'main']
+
+  hotfix:
+    regex: ^hotfix(es)?[/-]
+    label: beta.{BranchName}
     increment: Patch
-    is-release-branch: true
-    prevent-increment: true
-    source-branches: [main]
+    source-branches: ['main']
+
+  pull-request:
+    regex: ^(pull|pull\-requests|pr)[/-]
+    label: pr
+    increment: Inherit
+
+  support:
+    regex: ^support[/-]
+    label: ''
+    increment: Patch
+    is-mainline: true
