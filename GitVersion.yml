@@ -4,8 +4,3 @@ branches:
     mode: ContinuousDelivery
     tag: beta
     increment: Patch
-  develop:
-    regex: ^develop$
-    mode: ContinuousDeployment
-    tag: alpha
-    increment: Minor
