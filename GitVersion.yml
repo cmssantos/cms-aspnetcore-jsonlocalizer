@@ -1,9 +1,25 @@
 mode: ContinuousDelivery
 branches:
+  develop:
+    regex: ^develop$
+    label: alpha
+    increment: Minor
+    track-merge-target: false
+    source-branches: []
+    tracks-release-branches: false
+    
   main:
     regex: ^main$
-    prevent-increment: true
     label: beta
     increment: Patch
-    track-merge-target: false
-    is-main-branch: true
+    prevent-increment: true
+    is-release-branch: true
+    tracks-release-branches: false
+
+  release:
+    regex: ^releases?[/-]
+    label: ""
+    increment: Patch
+    is-release-branch: true
+    prevent-increment: true
+    source-branches: [main]

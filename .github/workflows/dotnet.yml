@@ -63,11 +63,6 @@ jobs:
       with:
         versionSpec: '6.0.x'
         preferLatestVersion: true
-        
-    - name: Debug GitVersion
-      run: |
-        dotnet-gitversion /diag
-        dotnet-gitversion /output json /verbosity diagnostic
 
     - name: Determine Version
       id: gitversion
@@ -172,15 +167,16 @@ jobs:
       - name: Pack
         run: |
           if [[ ${{ github.ref }} == refs/heads/develop ]]; then
-            VERSION_SUFFIX="-alpha.${{ github.run_number }}"
+            VERSION_SUFFIX="-alpha.${{ steps.gitversion.outputs.commitsSinceVersionSource }}"
           elif [[ ${{ github.ref }} == refs/heads/main ]]; then
-            VERSION_SUFFIX="-beta.${{ github.run_number }}"
+            VERSION_SUFFIX="-beta.${{ steps.gitversion.outputs.commitsSinceVersionSource }}"
           else
             VERSION_SUFFIX=""
           fi
+
           dotnet pack --configuration Release --output nupkgs \
-          /p:Version=${{ steps.gitversion.outputs.fullSemVer }}$VERSION_SUFFIX \
-          /p:PackageVersion=${{ steps.gitversion.outputs.fullSemVer }}$VERSION_SUFFIX
+            /p:Version=${{ steps.gitversion.outputs.majorMinorPatch }}$VERSION_SUFFIX \
+            /p:PackageVersion=${{ steps.gitversion.outputs.majorMinorPatch }}$VERSION_SUFFIX
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
