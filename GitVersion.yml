@@ -7,6 +7,30 @@ no-bump-message: '\+semver:\s?(none|skip)'
 commit-message-incrementing: Enabled
 
 branches:
+  develop:
+    regex: ^develop$
+    label: alpha
+    increment: Minor
+    track-merge-target: false
+    source-branches: []
+    tracks-release-branches: false
+    
+  main:
+    regex: ^main$
+    label: beta
+    increment: Patch
+    prevent-increment: true
+    is-release-branch: true
+    tracks-release-branches: false
+
+  release:
+    regex: ^releases?[/-]
+    label: ""
+    increment: Patch
+    is-release-branch: true
+    prevent-increment: true
+    source-branches: [main]
+
   feature:
     regex: ^features?[/-]
     label: alpha.{BranchName}
