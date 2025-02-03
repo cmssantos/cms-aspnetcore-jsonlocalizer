@@ -63,6 +63,11 @@ jobs:
       with:
         versionSpec: '6.0.x'
         preferLatestVersion: true
+        
+    - name: Debug GitVersion
+      run: |
+        dotnet-gitversion /diag
+        dotnet-gitversion /output json /verbosity diagnostic
 
     - name: Determine Version
       id: gitversion
