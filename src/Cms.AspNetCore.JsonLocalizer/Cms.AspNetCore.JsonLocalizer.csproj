@@ -3,6 +3,7 @@
   <PropertyGroup>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
+
   <PropertyGroup>
     <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -18,8 +19,8 @@
     <PackageProjectUrl>https://github.com/cmssantos/cms-aspnetcore-jsonlocalizer</PackageProjectUrl>
     <RepositoryUrl>https://github.com/cmssantos/cms-aspnetcore-jsonlocalizer.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageReadmeFile>../../README.md</PackageReadmeFile>
-    <PackageIcon>../../icon.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
