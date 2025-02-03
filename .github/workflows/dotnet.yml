@@ -2,11 +2,11 @@ name: .NET CI/CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
     tags:
       - 'v*'
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
   release:
     types: [published]
 
@@ -22,10 +22,6 @@ jobs:
           git config --global core.autocrlf false
           git config --global core.eol crlf
           git add --renormalize .
-          
-      - name: Fix line endings
-        run: |
-          find . -type f -name "*.cs" -exec dos2unix {} +
           
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
