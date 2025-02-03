@@ -205,28 +205,19 @@ jobs:
 
       - name: Publish NuGet package
         run: |
-          PACKAGE_PATH="nupkgs"
-        
-          # Encontrar o primeiro .nupkg não-símbolo correspondente ao branch/tag
           if [[ ${{ github.ref }} == refs/heads/develop ]]; then
-            PACKAGE=$(find "$PACKAGE_PATH" -maxdepth 1 -name '*-alpha.*.nupkg' -not -name '*.snupkg' | head -n 1)
+            dotnet nuget push nupkgs/*-alpha.*.nupkg \
+              --api-key ${{ secrets.NUGET_API_KEY }} \
+              --source https://api.nuget.org/v3/index.json \
+              --skip-duplicate
           elif [[ ${{ github.ref }} == refs/heads/main ]]; then
-            PACKAGE=$(find "$PACKAGE_PATH" -maxdepth 1 -name '*-beta.*.nupkg' -not -name '*.snupkg' | head -n 1)
-          elif [[ ${{ github.ref }} == refs/tags/* ]]; then
-            PACKAGE=$(find "$PACKAGE_PATH" -maxdepth 1 -name '*.nupkg' -not -name '*-*' -not -name '*.snupkg' | head -n 1)
+            dotnet nuget push nupkgs/*-beta.*.nupkg \
+              --api-key ${{ secrets.NUGET_API_KEY }} \
+              --source https://api.nuget.org/v3/index.json \
+              --skip-duplicate
           else
-            echo "::error::Invalid publish context"
-            exit 1
+            dotnet nuget push nupkgs/*.nupkg \
+              --api-key ${{ secrets.NUGET_API_KEY }} \
+              --source https://api.nuget.org/v3/index.json \
+              --skip-duplicate
           fi
-
-          if [[ -z "$PACKAGE" ]]; then
-            echo "::error::No matching package found in $PACKAGE_PATH"
-            ls -l "$PACKAGE_PATH" || true
-            exit 1
-          fi
-
-          echo "Publishing package: $PACKAGE"
-          dotnet nuget push "$PACKAGE" \
-            --api-key ${{ secrets.NUGET_API_KEY }} \
-            --source https://api.nuget.org/v3/index.json \
-            --skip-duplicate
