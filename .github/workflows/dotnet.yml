@@ -29,28 +29,6 @@ jobs:
           dotnet-version: |
             6.0.x
             8.0.x
-            
-      - name: Validate Icon File
-        run: |
-          if [ ! -f icon.png ]; then
-            echo "::error::Icon file not found!"
-            exit 1
-          fi
-          
-          # Verifica tipo MIME do arquivo
-          file_type=$(file -b --mime-type icon.png)
-          if [[ "$file_type" != "image/png" && "$file_type" != "image/jpeg" ]]; then
-            echo "::error::Invalid image format: $file_type"
-            exit 1
-          fi
-          
-          # Verifica tamanho máximo (1MB)
-          max_size=1048576
-          actual_size=$(wc -c < icon.png)
-          if [ $actual_size -gt $max_size ]; then
-            echo "::error::Icon size exceeds 1MB (actual: ${actual_size} bytes)"
-            exit 1
-          fi
       
       - name: Run linter
         run: dotnet format --verify-no-changes --verbosity diagnostic
@@ -102,6 +80,28 @@ jobs:
         /p:AssemblyVersion=${{ steps.gitversion.outputs.assemblySemVer }} \
         /p:FileVersion=${{ steps.gitversion.outputs.assemblySemFileVer }} \
         /p:InformationalVersion=${{ steps.gitversion.outputs.informationalVersion }}
+        
+    - name: Validate Icon File
+      run: |
+        if [ ! -f icon.png ]; then
+          echo "::error::Icon file not found!"
+          exit 1
+        fi
+        
+        # Verifica tipo MIME do arquivo
+        file_type=$(file -b --mime-type icon.png)
+        if [[ "$file_type" != "image/png" && "$file_type" != "image/jpeg" ]]; then
+          echo "::error::Invalid image format: $file_type"
+          exit 1
+        fi
+        
+        # Verifica tamanho máximo (1MB)
+        max_size=1048576
+        actual_size=$(wc -c < icon.png)
+        if [ $actual_size -gt $max_size ]; then
+          echo "::error::Icon size exceeds 1MB (actual: ${actual_size} bytes)"
+          exit 1
+        fi
 
   test:
     runs-on: ubuntu-latest
