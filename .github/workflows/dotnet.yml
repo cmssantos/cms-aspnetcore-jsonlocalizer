@@ -41,6 +41,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -68,6 +69,11 @@ jobs:
       uses: gittools/actions/gitversion/execute@v3.1.11
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Debug GitVersion Output
+      run: |
+        dotnet-gitversion /output json > gitversion.json
+        cat gitversion.json
 
     - name: Restore dependencies
       run: dotnet restore
