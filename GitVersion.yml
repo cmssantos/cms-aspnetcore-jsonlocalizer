@@ -3,7 +3,7 @@ branches:
   main:
     regex: ^main$
     prevent-increment: true
-    tag: beta
+    label: beta
     increment: Patch
     track-merge-target: false
     is-mainline: true
