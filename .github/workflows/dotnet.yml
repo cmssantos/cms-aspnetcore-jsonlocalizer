@@ -209,8 +209,11 @@ jobs:
             PACKAGE_NAME=$(ls nupkgs/*-alpha.*.nupkg)
           elif [[ ${{ github.ref }} == refs/heads/main ]]; then
             PACKAGE_NAME=$(ls nupkgs/*-beta.*.nupkg)
-          else
+          elif [[ ${{ github.ref }} == refs/tags/* ]]; then
             PACKAGE_NAME=$(ls nupkgs/*.nupkg)
+          else
+            echo "No matching package found"
+            exit 1
           fi
         
           if [ -z "$PACKAGE_NAME" ]; then
