@@ -171,7 +171,9 @@ jobs:
 
           dotnet pack --configuration Release --output nupkgs \
             /p:Version=${{ steps.gitversion.outputs.majorMinorPatch }}$VERSION_SUFFIX \
-            /p:PackageVersion=${{ steps.gitversion.outputs.majorMinorPatch }}$VERSION_SUFFIX
+            /p:PackageVersion=${{ steps.gitversion.outputs.majorMinorPatch }}$VERSION_SUFFIX \
+            /p:IncludeSymbols=true \
+            /p:SymbolPackageFormat=snupkg
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -205,19 +207,7 @@ jobs:
 
       - name: Publish NuGet package
         run: |
-          if [[ ${{ github.ref }} == refs/heads/develop ]]; then
-            dotnet nuget push nupkgs/*-alpha.*.nupkg \
-              --api-key ${{ secrets.NUGET_API_KEY }} \
-              --source https://api.nuget.org/v3/index.json \
-              --skip-duplicate
-          elif [[ ${{ github.ref }} == refs/heads/main ]]; then
-            dotnet nuget push nupkgs/*-beta.*.nupkg \
-              --api-key ${{ secrets.NUGET_API_KEY }} \
-              --source https://api.nuget.org/v3/index.json \
-              --skip-duplicate
-          else
-            dotnet nuget push nupkgs/*.nupkg \
-              --api-key ${{ secrets.NUGET_API_KEY }} \
-              --source https://api.nuget.org/v3/index.json \
-              --skip-duplicate
-          fi
+          dotnet nuget push nupkgs/*.nupkg \
+            --api-key ${{ secrets.NUGET_API_KEY }} \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
