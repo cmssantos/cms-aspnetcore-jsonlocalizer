@@ -6,4 +6,4 @@ branches:
     label: beta
     increment: Patch
     track-merge-target: false
-    is-mainline: true
+    is-main-branch: true
