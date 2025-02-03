@@ -16,7 +16,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
+      - name: Normalize Line Endings
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol crlf
+          git add --renormalize .
+          
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
